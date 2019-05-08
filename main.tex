@@ -53,7 +53,7 @@
 \newcommand{\dpto}{Departamento de Ingeniería Matemática}
 \newcommand{\curso}{MA5307-1 Análisis Numérico de Ecuaciones en Derivadas Parciales: Teoría y Laboratorio}
 \newcommand{\TareaNum}{}
-\newcommand{\tituloLab}{Difusión de calor propagado por una estufa en medio anisótropico}
+\newcommand{\tituloLab}{Difusión de calor propagado por una estufa en medio inhomogéneo}
 \newcommand{\fecha}{\today}
 %=====================================
 \newcommand{\R}{\mathbb{R}}
@@ -182,7 +182,10 @@ La deducción de la ecuación se puede escribir de la forma
     \partial_t u(x,t) = k(x) \sum_{i,j} \partial_{x_i} (a_{i,j} (x) \partial_{x_j} u(x,t) )
 \end{align}
 
-Para agregar la hipótesis de debe de estar la estufa emitiendo calor en todo instante, se debe sumar la cantidad de calor que emite la estufa desde la posición en la que se encuentra, si la estufa esta en la posición $x_e,$ suponiendo que la estufa emite una cantidad $\beta >0$ de temperatura, se tiene entonces que $\beta \delta_{x = x_e}$ suma $\beta$ cuando se quiere ver la temperatura en el punto $x_e,$ por lo que la ecuación quedaría modelada de la forma:
+Donde la matriz $A(x):= [a_{ij}]_{ij}(x)$ representa la matriz de conductividad térmica. Asumiendo un medio isotrópico (es decir, que conduce el calor a la misma tasa en todas las direcciones) podemos suponer $A = diag(a(x))$. La dependencia de $x$ viene de que el calor se distribuirá en distintos materiales (aire, paredes, suelo). Suponiendo que cada material es homogéneo, la función $a(x)$ es constante por regiones, y en cada región $R$ la ecuación estará dada por
+$$\partial_t u(x,t) = k(x) a_R(x) \nabla u(x,t) $$
+
+Para agregar la hipótesis de debe de estar la estufa emitiendo calor en todo instante, se debe sumar la cantidad de calor que emite la estufa desde la posición en la que se encuentra: si la llama de la estufa está en la posición $x_e,$ y su temperatura es $\beta >0$, se tiene entonces que la ecuación quedaría modelada de la forma:
 
 \begin{align}
     \partial_t u(x,t) = k(x) \sum_{i,j} \partial_{x_i} (a_{i,j} (x) \partial_{x_j} u(x,t) ) + \beta \delta_{x = x_e}
@@ -193,17 +196,16 @@ La forma general de la ecuación que se quiere resolver es de la forma
 
 \begin{equation}
 \label{eqn:principal}
-u_t - \Delta u = - \alpha (x),
+u_t - \Delta u = f(x),
 \end{equation}
   
-donde $u(t,x)$ representa la temperatura en el punto $x$ en el tiempo $t$ y la función $\alpha$ representa la resistencia de conductividad del medio en la posición $x.$   
+donde $u(t,x)$ representa la temperatura en el punto $x$ en el tiempo $t$ y la función $f$ representa la llama de la estufa.   
 
 
 
 
 
-
-\subsection{Modelación varacional del problemas}
+\subsection{Modelación varacional del problema}
 Para ver la forma varacional del problema, se debe tener en cuenta el teorema de Lax-Milgram para que haya existencia y unicidad del problema.
 
 Dada una función test $v, $ si se multiplica la ecuación (\ref{eqn:principal}) e integrando por partes se tienen que 
