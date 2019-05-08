@@ -1,0 +1,234 @@
+\documentclass[12pt,paperletter]{article}
+\usepackage[activeacute,spanish,es-noquoting]{babel}
+\usepackage[letterpaper,includeheadfoot, top=1.5cm, bottom=1.5cm, right=2.0cm, left=2.0cm]{geometry}
+\usepackage{wrapfig}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{bbold}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amssymb}
+\usepackage{dsfont}
+\usepackage{parcolumns}
+%\usepackage{pdfpages}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{subfig}
+\usepackage{hyperref}
+\usepackage{pgf,tikz}
+\usetikzlibrary{arrows}
+%Pseudocodigo
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{pseudocode}
+\usepackage{varwidth}
+\usepackage{dsfont}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage{listings} %escribir código.
+\usepackage{diagbox} %tablas doble entrada
+\usepackage[utf8]{inputenc}
+\usepackage{comment}
+\usetikzlibrary{automata,positioning}
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+%Regla
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\newcommand{\NaN}{\texttt{NaN}}
+%=====================================
+%\usepackage[framed,numbered,autolinebreaks,useliterate]{mcode}
+\graphicspath{{images/}{otherfolder/}}
+
+%INDENTACION
+%\setlength{\parindent}{0pt}
+%============INFORMACION==================
+\newcommand{\profeA}{Axel Osses}
+\newcommand{\profAuxA}{Pablo Arratia}
+\newcommand{\profAuxB}{Manuel Suil Jorquera}
+\newcommand{\alumnoA}{Guillermo Dinamarca}
+\newcommand{\alumnoB}{Edgar Contreras Mayr}
+\newcommand{\dpto}{Departamento de Ingeniería Matemática}
+\newcommand{\curso}{MA5307-1 Análisis Numérico de Ecuaciones en Derivadas Parciales: Teoría y Laboratorio}
+\newcommand{\TareaNum}{}
+\newcommand{\tituloLab}{Difusión de calor propagado por una estufa en medio anisótropico}
+\newcommand{\fecha}{\today}
+%=====================================
+\newcommand{\R}{\mathbb{R}}
+
+\renewcommand{\baselinestretch}{1.3}
+
+%Redefinición Demostración
+\renewcommand{\qedsymbol}{\rule{0.7em}{0.7em}}
+%\usepackage[biblabel]{cite}
+\renewenvironment{proof}{{\bfseries \noindent Demostración}}{ \qed \\}
+%==========================================
+\newcommand{\s}{\sigma}
+\renewcommand{\t}{\tau}
+\newcommand{\Om}{\Omega}
+\newcommand{\om}{\omega}
+\newcommand{\tgt}[1]{\texttt{#1}}
+\newcommand{\N}{\mathds{N}}
+\newcommand{\imp}{\Rightarrow}
+\newcommand{\RR}{\mathds{R}}
+\newcommand{\noi}{\noindent}
+\newcommand{\ds}{\displaystyle}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{Ejercicio \arabic{subsubsection}}
+%Para comenzar las subsubsecciones desde un número arbitrario
+\newcommand{\subsubnum}[1]{\setcounter{subsubsection}{#1 - 1}}
+\begin{document}
+\setlength{\parindent}{0pt}
+%\input{commands}
+\newtheorem{exercice}{\bf Ejercicio}
+\newenvironment{ejercicio}{\begin{exercice}
+\rm}{\end{exercice}}
+\def\matlab{{\tt Matlab\ }}
+\def\python{{\tt Python\ }}
+%\input{header}
+
+
+
+%\begin{sf}
+%==============PORTADA=====================
+
+
+
+%\begin{titlepage}
+\pagestyle{fancy}
+\fancyhf{}
+
+%==============CABECERA=====================
+\renewcommand{\headrulewidth}{1pt}
+\fancyhead[L]{\begin{wrapfigure}{l}{0.2\textwidth}
+  \begin{center}
+  \advance\leftskip 0cm
+  \vspace{-1.5cm}
+    \includegraphics[width=0.2\textwidth]{fcfm.pdf}
+  \end{center}
+\end{wrapfigure}
+\large \textbf{Universidad de Chile} \\ \text{Facultad de Ciencias Físicas y Matemáticas} \\ \text{\dpto} \\ \text{MA5307-1 Análisis Numérico de Ecuaciones en Derivadas Parciales}}
+
+
+%==============TITULO=====================
+
+\vspace*{7cm}
+\begin{center}
+%\horrule{1pt} \\[0.5cm] % Thin top horizontal rule
+\Huge Avance de Proyecto:  \\[0.2 cm] % The assignment title
+\LARGE  \tituloLab \\
+%\horrule{1pt} \\[0.5cm] % Thick bottom horizontal rule
+\vspace{0.2cm}
+\huge{}
+\end{center}
+
+%===============NOMBRES====================
+\vfill
+\begin{flushright}
+\begin{tabular}{lll}
+Nombres:  & \alumnoA \\
+          & \alumnoB  \\ \\
+Profesor de Cátedra: 	& \profeA \\ \\
+                        %& \profeB \\ \\
+Profesor Ayudante: 	& \profAuxA \\
+                    & \profAuxB \\
+%Profesor Ayudante:	& \ayudante \\ 
+%                   & \ayudanteB \\ \\
+Fecha: & \fecha \\
+\end{tabular}
+\end{flushright}
+%\end{titlepage}
+\newgeometry{top=2.5cm, bottom=2.5cm, right=2.0cm, left=2.0cm}
+\newpage
+\pagestyle{fancy}
+\fancyhf{}
+%Encabezado
+%\fancyhead[L]{\rightmark}
+\fancyhead[L]{\small \rm \textit{\curso}} %Izquierda
+\fancyhead[R]{\small \rm \textit{}} %Derecha
+%\fancyfoot[L]{\small \rm \textit{Tarea \TareaNum}} %Izquierda
+\fancyfoot[R]{\small \rm \textbf{\thepage}} %Derecha
+%\fancyfoot[C]{\thepage} %Centro
+\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}
+\renewcommand{\headrulewidth}{0.5pt}
+%\renewcommand{\footrulewidth}{0.5pt}
+
+\tableofcontents
+
+\newpage
+\section{Introducción}
+
+El el presente proyecto se aborda el problema de como se difunde la temperatura en una habitación, la fuente que emite calor es una estufa ubicada en un rincón de la habitación. Además se considera que las paredes de la habitación ejercen una resistencia a la difusión del calor, por lo que la difusión de calor en el medio no es uniforme, es por esto que se considera la difusión de calor en un medio anisotrópico.
+
+La difusión de calor se modela mediante la ecuación del calor, por lo que se usan métodos vistos en catedra para resolver de forma numérica el problema 
+
+\newpage
+\section{Marco teórico}
+
+\subsection{Modelación del problema}
+Se considera la ecuación del calor como base para la modelación del problema, la idea es establecer condiciones de borde que representen las paredes de la habitación y agregar una fuente de calor en la ecuación que modele la emisión de calor dada por la estufa. 
+
+Para la modelación del problema se deben de considerar varios principios, primero se debe considerar el flujo de calor como un flujo de energía, de está forma el calor que se 
+
+%seguir según referencia e wiki 
+
+La deducción de la ecuación se puede escribir de la forma 
+
+(seguir mas adelante)
+
+\begin{align}
+    \partial_t u(x,t) = k(x) \sum_{i,j} \partial_{x_i} (a_{i,j} (x) \partial_{x_j} u(x,t) )
+\end{align}
+
+Para agregar la hipótesis de debe de estar la estufa emitiendo calor en todo instante, se debe sumar la cantidad de calor que emite la estufa desde la posición en la que se encuentra, si la estufa esta en la posición $x_e,$ suponiendo que la estufa emite una cantidad $\beta >0$ de temperatura, se tiene entonces que $\beta \delta_{x = x_e}$ suma $\beta$ cuando se quiere ver la temperatura en el punto $x_e,$ por lo que la ecuación quedaría modelada de la forma:
+
+\begin{align}
+    \partial_t u(x,t) = k(x) \sum_{i,j} \partial_{x_i} (a_{i,j} (x) \partial_{x_j} u(x,t) ) + \beta \delta_{x = x_e}
+\end{align}
+
+
+La forma general de la ecuación que se quiere resolver es de la forma 
+
+\begin{equation}
+\label{eqn:principal}
+u_t - \Delta u = - \alpha (x),
+\end{equation}
+  
+donde $u(t,x)$ representa la temperatura en el punto $x$ en el tiempo $t$ y la función $\alpha$ representa la resistencia de conductividad del medio en la posición $x.$   
+
+
+
+
+
+
+\subsection{Modelación varacional del problemas}
+Para ver la forma varacional del problema, se debe tener en cuenta el teorema de Lax-Milgram para que haya existencia y unicidad del problema.
+
+Dada una función test $v, $ si se multiplica la ecuación (\ref{eqn:principal}) e integrando por partes se tienen que 
+
+\begin{align*}
+    \langle u_t, v \rangle + \int \nabla u \dot \nabla v   &= - \langle \alpha , v \rangle \\
+    \frac{d}{dt} (\langle u, v \rangle)+ b(u,v)&=-\langle \alpha , v \rangle, \\
+\end{align*}
+
+donde $b(u,v)$ es una aplicación bilineal, 
+
+\section{Construcción del método}
+
+\newpage
+\section{Resolución de instancias del problema}
+
+\subsection{Caso 1: Problema unidimensional }
+
+
+\subsection{Caso 2: Problema bidimensional}
+
+
+
+
+\newpage
+\section{Conclusión}
+
+\end{document}
