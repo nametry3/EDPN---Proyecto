@@ -53,7 +53,7 @@
 \newcommand{\dpto}{Departamento de Ingeniería Matemática}
 \newcommand{\curso}{MA5307-1 Análisis Numérico de Ecuaciones en Derivadas Parciales: Teoría y Laboratorio}
 \newcommand{\TareaNum}{}
-\newcommand{\tituloLab}{Difusión de calor propagado por una estufa en medio inhomogéneo}
+\newcommand{\tituloLab}{Difusión de calor propagado por una estufa en medio no homogéneo}
 \newcommand{\fecha}{\today}
 %=====================================
 \newcommand{\R}{\mathbb{R}}
@@ -117,7 +117,7 @@
 \vspace*{7cm}
 \begin{center}
 %\horrule{1pt} \\[0.5cm] % Thin top horizontal rule
-\Huge Avance de Proyecto:  \\[0.2 cm] % The assignment title
+\Huge Informe de Proyecto:  \\[0.2 cm] % The assignment title
 \LARGE  \tituloLab \\
 %\horrule{1pt} \\[0.5cm] % Thick bottom horizontal rule
 \vspace{0.2cm}
@@ -179,11 +179,26 @@ La deducción de la ecuación se puede escribir de la forma
 (seguir mas adelante)
 
 \begin{align}
-    \partial_t u(x,t) = k(x) \sum_{i,j} \partial_{x_i} (a_{i,j} (x) \partial_{x_j} u(x,t) )
+    \label{eqn:gnral}
+    \partial_t u(x,t) - k(x) \sum_{i,j} \partial_{x_i} (a_{i,j} (x) \partial_{x_j} u(x,t)  )  = f(x) 
 \end{align}
 
-Donde la matriz $A(x):= [a_{ij}]_{ij}(x)$ representa la matriz de conductividad térmica. Asumiendo un medio isotrópico (es decir, que conduce el calor a la misma tasa en todas las direcciones) podemos suponer $A = diag(a(x))$. La dependencia de $x$ viene de que el calor se distribuirá en distintos materiales (aire, paredes, suelo). Suponiendo que cada material es homogéneo, la función $a(x)$ es constante por regiones, y en cada región $R$ la ecuación estará dada por
-$$\partial_t u(x,t) = k(x) a_R(x) \nabla u(x,t) $$
+Donde la matriz $A(x):= [a_{ij}]_{ij}(x)$ representa la matriz de conductividad térmica. Asumiendo un medio isotrópico (es decir, que conduce el calor a la misma tasa en todas las direcciones) podemos suponer $A = (a(x))_{i,j \in \{1,...,n\}},$ notar que la dependencia de $x$ viene de que el calor se distribuirá en distintos materiales (aire, paredes, suelo). Suponiendo que cada material es homogéneo se tendría entonces que la función $\alpha$ es una función constante a tramos, donde en cada punto que sea del mismo material la función le asigna la constante de conductividad térmica correspondiente. En este caso se tiene que el operador $A(x)$ es constante por regiones, la ecuación se puede simplificar si se acota el dominio del problema solo a una región don igual conductividad térmica, si se llama $R$ a la región, la derivada del operador $A$ sobre la región $R$ es nulo en cada coordenadas por ser constante en la región $R$. En efecto, se tiene que el término de la sumatoria se calcula como
+
+\begin{align*}
+    k(x) \sum_{i,j} \partial_{x_i} (a_{i,j} (x) \partial_{x_j} u(x,t)  )  &= k(x)\sum_{i = 1 }^{d}  \partial_{x_i} \langle  A_{i,\cdot} (x), \nabla u (x,t) \rangle  \\
+    &=  k(x)\
+     \nabla \cdot \left(\langle  A_{i,\cdot} (x), \nabla u (x,t) \rangle  )\right)\\
+    &= k(x) A\sum_{i,j}  a (x) \partial_{x_j} u(x,t)  )
+\end{align*}
+
+de esta forma la ecuación estará dada por:
+
+\begin{align}
+    \label{eqn:gnral simple}
+    \partial_t u(x,t) -k(x) a_(x) \Delta u(x,t) = f (x)
+\end{align}
+
 
 Para agregar la hipótesis de debe de estar la estufa emitiendo calor en todo instante, se debe sumar la cantidad de calor que emite la estufa desde la posición en la que se encuentra: si la llama de la estufa está en la posición $x_e,$ y su temperatura es $\beta >0$, se tiene entonces que la ecuación quedaría modelada de la forma:
 
