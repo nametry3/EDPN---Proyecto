@@ -53,7 +53,7 @@
 \newcommand{\dpto}{Departamento de Ingeniería Matemática}
 \newcommand{\curso}{MA5307-1 Análisis Numérico de Ecuaciones en Derivadas Parciales: Teoría y Laboratorio}
 \newcommand{\TareaNum}{}
-\newcommand{\tituloLab}{Difusión de calor propagado por una estufa en medio no homogéneo}
+\newcommand{\tituloLab}{Propagación de calor en un medio heterogéneo: aplicación a fuentes de calor domésticas}
 \newcommand{\fecha}{\today}
 %=====================================
 \newcommand{\R}{\mathbb{R}}
@@ -68,13 +68,16 @@
 \newcommand{\s}{\sigma}
 \renewcommand{\t}{\tau}
 \newcommand{\Om}{\Omega}
+\newcommand{\h}{\mathbf{H}}
 \newcommand{\om}{\omega}
 \newcommand{\tgt}[1]{\texttt{#1}}
 \newcommand{\N}{\mathds{N}}
 \newcommand{\imp}{\Rightarrow}
 \newcommand{\RR}{\mathds{R}}
 \newcommand{\noi}{\noindent}
+\renewcommand{\O}{\Omega}
 \newcommand{\ds}{\displaystyle}
+\usepackage{cancel}
 \renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
 \renewcommand{\thesubsubsection}{Ejercicio \arabic{subsubsection}}
 %Para comenzar las subsubsecciones desde un número arbitrario
@@ -93,7 +96,8 @@
 
 %\begin{sf}
 %==============PORTADA=====================
-
+%Paquete para dibujos en latex
+\usepackage{tikz}
 
 
 %\begin{titlepage}
@@ -160,92 +164,139 @@ Fecha: & \fecha \\
 \newpage
 \section{Introducción}
 
-El el presente proyecto se aborda el problema de como se difunde la temperatura en una habitación, la fuente que emite calor es una estufa ubicada en un rincón de la habitación. Además se considera que las paredes de la habitación ejercen una resistencia a la difusión del calor, por lo que la difusión de calor en el medio no es uniforme, es por esto que se considera la difusión de calor en un medio anisotrópico.
+En este proyecto se aborda el problema de propagación de calor, este proceso se conoce como difusión de calor, se estudia el proceso de como se calienta una una casa mediante la acción de una o más estufas en posiciones arbitrarias. Para simplificar el problema, la casa es de un piso, y consta de paredes rectas y ángulos rectangulares en las esquinas, además se considera una vista aérea de la casa. \\
 
-La difusión de calor se modela mediante la ecuación del calor, por lo que se usan métodos vistos en catedra para resolver de forma numérica el problema 
+Para comenzar el estudio se comienza planteando una ecuación que modele el fenómeno físico que se quiere estudiar, para ello se usa el proceso de difusión del calor y se consideran las funciones que aportan calor al sistema, en este caso son las estufas que se consideran como un punto en el interior del dominio (dominio rectangular).\\
+
+Inicialmente para la parte práctica, se estudia el caso de una habitación y una estufa con alguna apertura o puerta en alguna pared; posteriormente se desarrolla un programa capaz de soportar una geometría arbitraria en 2D.\\
+
+La difusión de calor se modela mediante la ecuación del calor, por lo que se realiza la formulación variacional del problema para que luego se pueda aplicar el método de Elementos Finitos para resolver de forma numérica el problema.
 
 \newpage
 \section{Marco teórico}
 
 \subsection{Modelación del problema}
-Se considera la ecuación del calor como base para la modelación del problema, la idea es establecer condiciones de borde que representen las paredes de la habitación y agregar una fuente de calor en la ecuación que modele la emisión de calor dada por la estufa. 
+Se considera la ecuación del calor como base para la resolución del problema. La idea es establecer condiciones de borde que representen adecuadamente las paredes de la casa y agregar fuentes de calor en la ecuación que modelen la emisión de calor dada por la estufa. 
 
-Para la modelación del problema se deben de considerar varios principios, primero se debe considerar el flujo de calor como un flujo de energía, de está forma el calor que se 
+Sea $q_t(R)$ la tasa de flujo de calor hacia una región $\O$. Si $q$ tiene densidad $Q$, tenemos que $$q_t(R) = \int_\O Q(x,t)$$
 
-%seguir según referencia e wiki 
+El flujo de calor es una función vectorial $\mathbf{H}(x)$, que caracteriza a $q_t$ como sigue: la tasa $q_t$ fluyendo por un elemento infinitesimal de área $dS$ y vector normal $n$ es $\h(x) \dot n(x) dS$. Así, tenemos que 
+$$q_t(R) = -\int_R \h(x)n(x)dS$$
 
-La deducción de la ecuación se puede escribir de la forma 
+Según la ley de Fourier, el flujo de energía depende linealmente del gradiente de la temperatura:
 
-(seguir mas adelante)
+$$\h(x) - A(x)\cdot \nabla u(x)$$
+
+donde $A(x) \in \R^{3\times3}$ es simétrica y definida positiva, y depende de la conductividad términa del medio en las distintas direcciones.\\
+
+Además, sabemos que el cambio de temperatura en $x$ es proporcional al calor fluyendo hacia $x$
+
+$$\partial_t u(x,t) = \kappa(x) Q(x,t)$$
+
+donde $\kappa(x) = \dfrac{1}{\rho(x) C_p(x)}$, con $\rho$ la densidad y $C_p$ el calor específico del medio en $x$.
+
+Consideramos también fuentes de calor puntuales $f(x) = \sum_{j} T_j\delta_j(x)$, donde $T_j$ es la temperatura de la fuente $j$ y $\delta_j = \mathds{1}_{x = x_j}$ es la delta de Kronecker en $x_j$ la posición de la fuente.
+
+Combinando las ecuaciones anteriores tenemos la ecuación general de flujo de calor:
 
 \begin{align}
     \label{eqn:gnral}
-    \partial_t u(x,t) - k(x) \sum_{i,j} \partial_{x_i} (a_{i,j} (x) \partial_{x_j} u(x,t)  )  = f(x) 
+     \partial_t u(x,t) - \kappa(x) \sum_{i,j}\partial_{x_i}(a_{ij}(x)\partial_{x_j} u(x,t)) = f(x)
 \end{align}
 
-Donde la matriz $A(x):= [a_{ij}]_{ij}(x)$ representa la matriz de conductividad térmica. Asumiendo un medio isotrópico (es decir, que conduce el calor a la misma tasa en todas las direcciones) podemos suponer $A = (a(x))_{i,j \in \{1,...,n\}},$ notar que la dependencia de $x$ viene de que el calor se distribuirá en distintos materiales (aire, paredes, suelo). Suponiendo que cada material es homogéneo se tendría entonces que la función $\alpha$ es una función constante a tramos, donde en cada punto que sea del mismo material la función le asigna la constante de conductividad térmica correspondiente. En este caso se tiene que el operador $A(x)$ es constante por regiones, la ecuación se puede simplificar si se acota el dominio del problema solo a una región don igual conductividad térmica, si se llama $R$ a la región, la derivada del operador $A$ sobre la región $R$ es nulo en cada coordenadas por ser constante en la región $R$. En efecto, se tiene que el término de la sumatoria se calcula como
-
-\begin{align*}
-    k(x) \sum_{i,j} \partial_{x_i} (a_{i,j} (x) \partial_{x_j} u(x,t)  )  &= k(x)\sum_{i = 1 }^{d}  \partial_{x_i} \langle  A_{i,\cdot} (x), \nabla u (x,t) \rangle  \\
-    &=  k(x)\
-     \nabla \cdot \left(\langle  A_{i,\cdot} (x), \nabla u (x,t) \rangle  )\right)\\
-    &= k(x) A\sum_{i,j}  a (x) \partial_{x_j} u(x,t)  )
-\end{align*}
-
-de esta forma la ecuación estará dada por:
+En este proyecto asumimos que cada pared es homogénea isotrópica, por lo que el medio es homogéneo isotrópico por pedazos. Esto implica que $A(x)$ es una matriz simétrica, diagonal, definida positiva, y constante por pedazos en $x$: por ende, la derivada es $0$ c.t.p. y podemos escribir la ecuación como
 
 \begin{align}
-    \label{eqn:gnral simple}
-    \partial_t u(x,t) -k(x) a_(x) \Delta u(x,t) = f (x)
+    \label{eqn:2}
+    \partial_t u(x,t) - \kappa(x)a(x) \Delta u(x,t) = f(x)
 \end{align}
 
+Consideramos además condiciones de borde mixtas $u = T_0 \in \R$ en $\partial \O_D$ (donde $\partial \O_D$ representa las aberturas de la casa) y $\nabla u \cdot \ n = 0$ en $\partial \O_N$. Los resultados teóricos también son válidos para el caso de condiciones de borde de tipo Robin.
 
-Para agregar la hipótesis de debe de estar la estufa emitiendo calor en todo instante, se debe sumar la cantidad de calor que emite la estufa desde la posición en la que se encuentra: si la llama de la estufa está en la posición $x_e,$ y su temperatura es $\beta >0$, se tiene entonces que la ecuación quedaría modelada de la forma:
+Para ver la forma variacional del problema, multimplicamos la ecuación \ref{eqn:2} por una función test $v$: integrando por partes, obtenemos
 
-\begin{align}
-    \partial_t u(x,t) = k(x) \sum_{i,j} \partial_{x_i} (a_{i,j} (x) \partial_{x_j} u(x,t) ) + \beta \delta_{x = x_e}
-\end{align}
-
-
-La forma general de la ecuación que se quiere resolver es de la forma 
-
-\begin{equation}
-\label{eqn:principal}
-u_t - \Delta u = f(x),
-\end{equation}
-  
-donde $u(t,x)$ representa la temperatura en el punto $x$ en el tiempo $t$ y la función $f$ representa la llama de la estufa.   
-
-
-
-
-
-\subsection{Modelación varacional del problema}
-Para ver la forma varacional del problema, se debe tener en cuenta el teorema de Lax-Milgram para que haya existencia y unicidad del problema.
-
-Dada una función test $v, $ si se multiplica la ecuación (\ref{eqn:principal}) e integrando por partes se tienen que 
-
-\begin{align*}
-    \langle u_t, v \rangle + \int \nabla u \dot \nabla v   &= - \langle \alpha , v \rangle \\
-    \frac{d}{dt} (\langle u, v \rangle)+ b(u,v)&=-\langle \alpha , v \rangle, \\
-\end{align*}
-
-donde $b(u,v)$ es una aplicación bilineal, 
-
-\section{Construcción del método}
+$$\frac{d}{dt}\int_\O u\cdot v dx + \int_\O \kappa(x) a(x) \nabla u\cdot \nabla v dx + \int_{\partial \O_N} \cancelto{0}{\nabla u\cdot n\  v} = \int_\O f\cdot v$$
 
 \newpage
-\section{Resolución de instancias del problema}
+\section{Resolución numérica}
+\subsection{Caso simplificado: Habitación cuadrada}
 
-\subsection{Caso 1: Problema unidimensional }
+Se dispuso una habitación cuadrada $\O = [0,1]^2$ con una estufa en la posición $(\frac{2}{7}, \frac{5}{7})$. La habitación tiene una abertura en las coordenadas $y \in [1/3,2/3]$. Las figuras \ref{pieza1} y \ref{pieza2} muestran un instante de la resolución numérica de esta habitación. Los parámetros utilizados (conductividades térmicas, densidades, etc.) corresponden a aire a nivel del mar y paredes de madera.
 
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{ejemplo1.png} % first figure itself
+        \caption{Instante de la resolución visto en 3D}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{ejemplo2.PNG} % second figure itself
+        \caption{Instante visto desde arriba}
+    \end{minipage}
+\end{figure}
 
-\subsection{Caso 2: Problema bidimensional}
+Se observa que efectivamente el calor fluye desde la fuente hacia los costados, y que los costados cerca de la abertura tienen una temperatura menor.
 
+\subsection{Simulación en una casa arbitraria}
+
+Para extender a un plano general de una casa, se implementan distintas clases en \textit{python}: el dominio y el mallado de éste se general automáticamente a partir de los bloques de aire y las paredes ingresadas, con el cuidado de que las propiedades físicas de las paredes sobreescriban a las de los bloques de aire cuando ocupan el mismo lugar.\\
+
+Como ejemplo, se puede considerar una casa como la siguiente:
+
+\begin{figure}[H]
+\begin{center}
+    \begin{tikzpicture}
+    \draw (0,0.5) -- (2.3,0.5);
+    \draw[red,dashed] (1.8,0.5) --(2.8,0.5);
+    \draw (2.8,0.5) -- (3.7,0.5)-- (3.7,-1) -- (5,-1) --(5,4) --(0,4) -- (0,0.5);
+    \draw[red,dashed] (3.5,4) --(4.5,4);
+    \draw (5,2.5) -- (3.7,2.5);
+    \draw[red,thick,dashed] (1,2) circle (0.1cm); 
+    \draw[red,thick,dashed] (4,-0.5) circle (0.1cm); 
+    \end{tikzpicture}
+\end{center}
+    \caption{Esquema de casa generalizada: dos estufas, dos puertas}
+    \label{mapita}
+\end{figure}
+
+todas las paredes tienen 0.3 de ancho. Se considera que la geometría de esta casa es lo suficientemente compleja como para comprobar la versatilidad del modelo, y lo suficientemente simple como para entender bien lo que suceda. Ambas estufas están encendidas a la misma temperatura. Se comprueban en la resolución numérica, entre otras cosas, los siguientes puntos:
+
+\begin{itemize}
+    \item La pared interior ejerce un efecto aislante que impide el paso de calor a la zona superior derecha
+    \item Las entradas abiertas enfrían las zonas cercanas de la casa.
+    \item La estufa de abajo a la derecha calienta su entorno más rápido que la de la izquierda, dado que hay menos distancia entre las paredes más cercanas.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{casa1.PNG} % first figure itself
+        \caption{Calor distribuido en la casa, $t\approx \frac{T}{3}$}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{casa2.PNG} % second figure itself
+        \caption{Calor distribuido en la casa, $t\approx \frac{2T}{3}$}
+    \end{minipage}
+\end{figure}
+
+La resolución numérica (salvo un factor de escala debido seguramente a inexactitud en los parámetros) corresponde con la intuición del problema.
 
 
 
 \newpage
+
 \section{Conclusión}
 
+
+
+
+Una vez modelado el problema físico, se reformuló el problema en su forma variacional, lo cual fue de gran ayuda a la hora implementar el modelo en Python. Con esto se pudo ver la potencia y el alcance que tiene el uso de la teoría en conjunto con la parte numérica.\\
+
+El problema de implementación se aborda de forma progresiva, estudiando primero modelos simples, comprendiendo bien las construcciones y las estructuras que se desean programar. Esta metodología lleva a la definición de una clase que sea capaz de crear objetos que representen los componentes de una casa, vale decir: paredes, aire, puertas, estufas. El hecho de poder comprender bien como es que se implementa el programa bien para una habitación simple, permite comprender bien los objetos que van a integrar la clase que se crea, esto hace que el código implementado sea moldeable y fácil de adaptar para crear estructuras más complejas (por ejemplo incorporando paredes de distintos materiales, ventanas, etc.)\\
+
+El proyecto fue una instancia de aprendizaje positiva y su desarrollo contribuyó significativamente en el aprendizaje de las materias del curso.
 \end{document}
